@@ -46,4 +46,5 @@
                           (lambda () (f (+ x 1)))))])
     (lambda () (f 0))))
 
-(define ones (lambda () (cons 1 ones)))
+(define (vector-assoc v vec)
+  ())
