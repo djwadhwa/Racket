@@ -53,7 +53,9 @@
 (define test5 (equal? (list "cats.jpg" "curry.jpg" "cats.jpg" "curry.jpg" "cats.jpg")(stream-for-k-steps cats-then-curry 5)))
 (define test6 (equal? (list (cons 1 1) (cons 1 2) (cons 1 3) (cons 1 4)) (stream-for-k-steps (stream-add-one funny-number-stream) 4)))
 (define test7 (equal? (list (cons 1 "a") (cons 2 "b") (cons 3 "a") (cons 1 "b") (cons 2 "a"))(stream-for-k-steps (cycle-lists (list 1 2 3) (list "a" "b")) 5)))
-  
+
+(define vec (vector (cons 1 2) (cons 2 3) (cons 7 8) 6))
+(define test8 (equal? (cons 2 3) (vector-assoc 2 vec)))
 ; These definitions will work only after you do some of the problems
 ; so you need to comment them out until you are ready.
 ; Add more tests as appropriate, of course.
