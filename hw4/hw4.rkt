@@ -47,4 +47,11 @@
     (lambda () (f 0))))
 
 (define (vector-assoc v vec)
-  ())
+  (letrec ([f (lambda (vec pos)
+                 (if (>= pos (- (vector-length vec) 1))
+                     #f
+                     (cond [(pair? (vector-ref vec pos))
+                            (if (equal? (car (vector-ref vec pos)) v)
+                                (vector-ref vec pos)
+                                (f vec (+ 1 pos)))])))])
+           (f vec 0)))         
