@@ -41,9 +41,9 @@
     (lambda () (cons (cons 1 (car pr)) (stream-add-one (cdr pr))))))
 
 (define (cycle-lists xs ys)
-  (letrec ([f (lambda (n)
-              (cons (cons (list-nth-mod xs n) (list-nth-mod ys n))
-                          (lambda () (f (+ n 1)))))])
+  (letrec ([f (lambda (x)
+              (cons (cons (list-nth-mod xs x) (list-nth-mod ys x))
+                          (lambda () (f (+ x 1)))))])
     (lambda () (f 0))))
 
 (define ones (lambda () (cons 1 ones)))
