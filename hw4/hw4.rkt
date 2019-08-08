@@ -54,4 +54,18 @@
                             (if (equal? (car (vector-ref vec pos)) v)
                                 (vector-ref vec pos)
                                 (f vec (+ 1 pos)))])))])
-           (f vec 0)))         
+   (f vec 0))) 
+   
+(define (caching-assoc xs n) 
+  (letrec ([cache (make-vector n #f)]
+           [tracker 0]
+           [addtocache (lambda (val)
+                        (vector-set! cache (remainder tracker (vector-length cache)) val)
+                        (set! tracker (+ tracker 1)))])
+   (lambda (x) (let* ([val (vector-assoc x cache)])
+                (if val
+                    val
+                    (let* ([newval (assoc x xs)])
+                      (if newval 
+                        (addtocache newval)
+                        #f)))))))
