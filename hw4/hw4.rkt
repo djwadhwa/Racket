@@ -48,24 +48,36 @@
 
 (define (vector-assoc v vec)
   (letrec ([f (lambda (vec pos)
-                 (if (>= pos (- (vector-length vec) 1))
+                 (if (> pos (- (vector-length vec) 1))
                      #f
                      (cond [(pair? (vector-ref vec pos))
-                            (if (equal? (car (vector-ref vec pos)) v)
-                                (vector-ref vec pos)
-                                (f vec (+ 1 pos)))])))])
+                            (let* ([currentv (vector-ref vec pos)])
+                            (if (equal? (car currentv) v)
+                                currentv
+                                (f vec (+ 1 pos))))]
+                           [#t (f vec (+ 1 pos))])))])
    (f vec 0))) 
    
 (define (caching-assoc xs n) 
   (letrec ([cache (make-vector n #f)]
            [tracker 0]
            [addtocache (lambda (val)
-                        (vector-set! cache (remainder tracker (vector-length cache)) val)
-                        (set! tracker (+ tracker 1)))])
-   (lambda (x) (let* ([val (vector-assoc x cache)])
-                (if val
-                    val
-                    (let* ([newval (assoc x xs)])
-                      (if newval 
+                         (vector-set! cache (remainder tracker (vector-length cache)) val)
+                         ;(print cache)
+                         (set! tracker (+ tracker 1)))])
+    (lambda (x) (let* ([val (vector-assoc x cache)])
+                  (if val
+                      val
+                      (let* ([newval (assoc x xs)])
                         (addtocache newval)
-                        #f)))))))
+                        newval))))))
+
+(define-syntax while-greater
+  (syntax-rules (do)
+    [(while-greater e1 do e2)
+     (let ([x e1])
+       (letrec([repeat (lambda (y)
+                         (if (> y x)
+                             (repeat e2)
+                             #t))])
+         (repeat e2)))]))
