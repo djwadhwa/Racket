@@ -46,7 +46,7 @@
       (place-repeatedly window pause stream (- n 1)))))
 
 ;; Tests Start Here
-(define test1 (equal? (sequence 2 3 11) (list 3 4 7 8 11)))
+(define test1 (equal? (sequence 2 3 11) (list 3 5 7 9 11)))
 (define xs (cons "Hello" (cons "Hi" null)))
 (define test2 (equal? (string-append-map xs "suffix") (list "Hellosuffix" "Hisuffix")))
 (define test3 (equal? "Hello" (list-nth-mod xs 2)))
@@ -56,13 +56,11 @@
 (define test8 (equal? (list (cons 1 "a") (cons 2 "b") (cons 3 "a") (cons 1 "b") (cons 2 "a"))(stream-for-k-steps (cycle-lists (list 1 2 3) (list "a" "b")) 5)))
 (define vec (vector (cons 1 2) (cons 2 3) (cons 7 8) 6))
 (define test9 (equal? (cons 2 3) (vector-assoc 2 vec)))
-(define xs (list (cons 1 2) (cons 2 3) (cons 6 0)))
-(define cacher (caching-assoc xs 2))
-(define test10a (equal? (cacher 1) (vector (cons 1 2) #f)))
-(define test10b (equal? (cacher 2) (vector (cons 1 2) (cons 2 3))))
-(define test10c (equal? (cacher 6) (vector (cons 6 0) (cons 2 3))))
-(define test10d (equal? (cacher 7) #f))
-
+(define ls (list (cons 1 2) (cons 2 3) (cons 6 0)))
+(define cacher (caching-assoc ls 2))
+(define a 7)
+(while-greater 2 do (begin (set! a (- a 1)) (print "x") a))
+(while-greater 2 do (begin (set! a (- a 1)) (print "x") a))
 
 ; These definitions will work only after you do some of the problems
 ; so you need to comment them out until you are ready.
@@ -77,8 +75,8 @@
 (define funny-test (stream-for-k-steps funny-number-stream 16))
 
 ; a zero-argument function: call (one-visual-test) to open the graphics window, etc.
-;(define (one-visual-test)
- ; (place-repeatedly (open-window) 0.5 (cycle-lists nums files) 27))
+(define (one-visual-test)
+ (place-repeatedly (open-window) 0.5 (cycle-lists nums files) 27))
 
 ; similar to previous but uses only two files and one position on the grid
 (define (visual-one-only)
