@@ -46,16 +46,24 @@
       (place-repeatedly window pause stream (- n 1)))))
 
 ;; Tests Start Here
+(define test1 (equal? (sequence 2 3 11) (list 3 4 7 8 11)))
 (define xs (cons "Hello" (cons "Hi" null)))
-(define test1 (equal? (string-append-map xs "suffix") (list "Hellosuffix" "Hisuffix")))
-(define test2 (equal? "Hello" (list-nth-mod xs 2)))
-(define test3and4 (equal? (list 1 2 3 4 5 -6 7) (stream-for-k-steps funny-number-stream 7)))
-(define test5 (equal? (list "cats.jpg" "curry.jpg" "cats.jpg" "curry.jpg" "cats.jpg")(stream-for-k-steps cats-then-curry 5)))
-(define test6 (equal? (list (cons 1 1) (cons 1 2) (cons 1 3) (cons 1 4)) (stream-for-k-steps (stream-add-one funny-number-stream) 4)))
-(define test7 (equal? (list (cons 1 "a") (cons 2 "b") (cons 3 "a") (cons 1 "b") (cons 2 "a"))(stream-for-k-steps (cycle-lists (list 1 2 3) (list "a" "b")) 5)))
-
+(define test2 (equal? (string-append-map xs "suffix") (list "Hellosuffix" "Hisuffix")))
+(define test3 (equal? "Hello" (list-nth-mod xs 2)))
+(define test4and5 (equal? (list 1 2 3 4 5 -6 7) (stream-for-k-steps funny-number-stream 7)))
+(define test6 (equal? (list "cats.jpg" "curry.jpg" "cats.jpg" "curry.jpg" "cats.jpg")(stream-for-k-steps cats-then-curry 5)))
+(define test7 (equal? (list (cons 1 1) (cons 1 2) (cons 1 3) (cons 1 4)) (stream-for-k-steps (stream-add-one funny-number-stream) 4)))
+(define test8 (equal? (list (cons 1 "a") (cons 2 "b") (cons 3 "a") (cons 1 "b") (cons 2 "a"))(stream-for-k-steps (cycle-lists (list 1 2 3) (list "a" "b")) 5)))
 (define vec (vector (cons 1 2) (cons 2 3) (cons 7 8) 6))
-(define test8 (equal? (cons 2 3) (vector-assoc 2 vec)))
+(define test9 (equal? (cons 2 3) (vector-assoc 2 vec)))
+(define xs (list (cons 1 2) (cons 2 3) (cons 6 0)))
+(define cacher (caching-assoc xs 2))
+(define test10a (equal? (cacher 1) (vector (cons 1 2) #f)))
+(define test10b (equal? (cacher 2) (vector (cons 1 2) (cons 2 3))))
+(define test10c (equal? (cacher 6) (vector (cons 6 0) (cons 2 3))))
+(define test10d (equal? (cacher 7) #f))
+
+
 ; These definitions will work only after you do some of the problems
 ; so you need to comment them out until you are ready.
 ; Add more tests as appropriate, of course.
