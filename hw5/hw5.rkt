@@ -11,7 +11,7 @@
 (struct ifnz (e1 e2 e3) #:transparent) ;; if not zero e1 then e2 else e3
 (struct fun  (nameopt formal body) #:transparent) ;; a recursive(?) 1-argument function
 (struct call (funexp actual)       #:transparent) ;; function call
-(struct mlet (var e body) #:transparent) ;; a local binding (let var = e in body) 
+(struct mlet (var e body) #:transparent) ;; a local binding (let var = e in body)
 (struct apair   (e1 e2) #:transparent) ;; make a new pair
 (struct first   (e)     #:transparent) ;; get first part of a pair
 (struct second  (e)     #:transparent) ;; get second part of a pair
@@ -19,11 +19,17 @@
 (struct ismunit (e)     #:transparent) ;; if e1 is unit then 1 else 0
 
 ;; a closure is not in "source" programs; it is what functions evaluate to
-(struct closure (env fun) #:transparent) 
+(struct closure (env fun) #:transparent)
 
 ;; Problem 1
+(define (racketlist->mupllist rlist)
+  (cond [(null? rlist) (munit)]
+         [#t (apair (car rlist) (racketlist->mupllist (cdr rlist)))]))
 
 ;; CHANGE (put your solutions here)
+(define (mupllist->racketlist mlist)
+  (cond [(munit? mlist) null]
+         [#t (cons (apair-e1 mlist) (mupllist->racketlist (apair-e2 mlist)))]))
 
 ;; Problem 2
 
@@ -34,19 +40,19 @@
         [(equal? (car (car env)) str) (cdr (car env))]
         [#t (envlookup (cdr env) str)]))
 
-;; Do NOT change the two cases given to you.  
+;; Do NOT change the two cases given to you.
 ;; DO add more cases for other kinds of MUPL expressions.
 ;; We will test eval-under-env by calling it directly even though
 ;; "in real life" it would be a helper function of eval-exp.
 (define (eval-under-env e env)
-  (cond [(var? e) 
+  (cond [(var? e)
          (envlookup env (var-string e))]
-        [(add? e) 
+        [(add? e)
          (let ([v1 (eval-under-env (add-e1 e) env)]
                [v2 (eval-under-env (add-e2 e) env)])
            (if (and (int? v1)
                     (int? v2))
-               (int (+ (int-num v1) 
+               (int (+ (int-num v1)
                        (int-num v2)))
                (error "MUPL addition applied to non-number")))]
         ;; CHANGE add more cases here
@@ -55,7 +61,7 @@
 ;; Do NOT change
 (define (eval-exp e)
   (eval-under-env e null))
-        
+
 ;; Problem 3
 
 (define (ifmunit e1 e2 e3) "CHANGE")
