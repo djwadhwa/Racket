@@ -67,6 +67,13 @@
                        (int 0))
                    (error "right side is not a MUPL integer"))
                (error "left side is not a MUPL integer")))]
+        [(ifnz? e)
+          (let ([v1 (eval-under-env (ifnz-e1 e) null)])
+            (if (int? v1)
+              (if (not (= (int-num v1) 0))
+                (eval-under-env (ifnz-e2 e) null)
+                (eval-under-env (ifnz-e3 e) null))
+            (error "first expression is not a MUPL integer")))]
         [#t (error (format "bad MUPL expression: ~v" e))]))
 
 ;; Do NOT change
