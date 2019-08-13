@@ -57,23 +57,50 @@
                (error "MUPL addition applied to non-number")))]
         ;; CHANGE add more cases here
         [(int? e) e]
+        [(munit? e) e]
+        [(closure? e) e]
         [(isgreater? e)
-         (let ([left (eval-under-env (isgreater-e1 e) null)]
-               [right (eval-under-env (isgreater-e2 e) null)])
-           (if (int? left)
-               (if (int? right)
-                   (if (> (int-num left) (int-num right))
+         (let ([v1 (eval-under-env (isgreater-e1 e) env)]
+               [v2 (eval-under-env (isgreater-e2 e) env)])
+           (if (int? v1)
+               (if (int? v2)
+                   (if (> (int-num v1) (int-num v2))
                        (int 1)
                        (int 0))
-                   (error "right side is not a MUPL integer"))
-               (error "left side is not a MUPL integer")))]
+                   (error "second expression is not a MUPL integer"))
+               (error "first expression is not a MUPL integer")))]
         [(ifnz? e)
-          (let ([v1 (eval-under-env (ifnz-e1 e) null)])
-            (if (int? v1)
-              (if (not (= (int-num v1) 0))
-                (eval-under-env (ifnz-e2 e) null)
-                (eval-under-env (ifnz-e3 e) null))
-            (error "first expression is not a MUPL integer")))]
+         (let ([v1 (eval-under-env (ifnz-e1 e) env)])
+           (if (int? v1)
+               (if (not (= (int-num v1) 0))
+                   (eval-under-env (ifnz-e2 e) env)
+                   (eval-under-env (ifnz-e3 e) env))
+               (error "first expression is not a MUPL integer")))]
+        [(fun? e) (closure env e)]
+        [(mlet? e) (let* ([v (eval-under-env (mlet-e e) env)]
+                         [new-env (cons (cons (mlet-var e) v) env)])
+                     (eval-under-env (mlet-body e) new-env))]
+        [(call? e) (let ([v1 (eval-under-env (call-funexp e) env)]
+                         [v2 (eval-under-env (call-actual e) env)])
+                     (if (closure? v1)
+                         (let ([function (closure-fun v1)]
+                               [environment (closure-env v1)])
+                           (if (null? (fun-nameopt function))
+                               (eval-under-env (fun-body function) (cons (cons (fun-formal function) v2) environment))
+                               (eval-under-env (fun-body function) (cons (cons (fun-nameopt function) v1) (cons (cons (fun-formal function) v2) environment)))))
+                           (error "first expression not a MUPL closure")))]
+        [(apair? e) (apair (eval-under-env (apair-e1 e) env) (eval-under-env (apair-e2 e) env))]
+        [(first? e) (let ([v (eval-under-env (first-e e) env)])
+                      (if (apair? v)
+                      (apair-e1 v)
+                      (error "expression is not a MUPL pair")))]
+        [(second? e) (let ([v (eval-under-env (second-e e) env)])
+                      (if (apair? v)
+                      (apair-e2 v)
+                      (error "expression is not a MUPL pair")))]
+        [(ismunit? e) (if (munit? (eval-under-env (ismunit-e e) env))
+                          (int 1)
+                          (int 0))]
         [#t (error (format "bad MUPL expression: ~v" e))]))
 
 ;; Do NOT change
@@ -82,11 +109,23 @@
 
 ;; Problem 3
 
-(define (ifmunit e1 e2 e3) "CHANGE")
+(define (ifmunit e1 e2 e3)
+  (ifnz (ismunit e1) e2 e3))
 
-(define (mlet* bs e2) "CHANGE")
+;(struct mlet (var e body) #:transparent) ;; a local binding (let var = e in body)
+(define (mlet* bs e2)
+  (if (null? bs)
+      e2
+      (mlet (car (car bs)) (cdr (car bs)) (mlet* (cdr bs) e2))))
 
-(define (ifeq e1 e2 e3 e4) "CHANGE")
+(define (ifeq e1 e2 e3 e4)
+  (mlet* (list (cons "_x" e1) (cons "_y" e2)) 
+         (ifnz (isgreater (var "_x") (var "_y"))
+               e4
+               (ifnz (isgreater (var "_y") (var "_x"))
+                     e4
+                     e3))))
+          
 
 ;; Problem 4
 
