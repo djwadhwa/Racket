@@ -129,7 +129,12 @@
 
 ;; Problem 4
 
-(define mupl-filter "CHANGE")
+(define (mupl-filter func)
+  (fun "recursive" "ls" (ifnz (ismunit (var "ls" ))
+                              (munit)
+                              (ifnz (call func (first (var "ls")))
+                                    (apair (first (var "ls")) (call (var "recursive") (second (var "ls"))))
+                                    (call (var "recursive") (second (var "ls")))))))
 
 (define mupl-all-gt
   (mlet "filter" mupl-filter
