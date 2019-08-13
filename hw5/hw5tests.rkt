@@ -19,7 +19,8 @@
    (check-equal? (racketlist->mupllist rlist) mlist)
    (check-equal? (mupllist->racketlist mlist) rlist)
    (check-equal? (eval-exp (add (int 2) (int 2))) (int 4) "add simple test")
-;
+   (check-equal? (eval-exp (call (fun "bar" "p" (isgreater (first (var "p")) (second (var "p")))) (apair (int 7) (int 5)))) (int 1))
+
 ;   (check-exn (lambda (x) (string=? (exn-message x) "MUPL addition applied to non-number"))
 ;              (lambda () (eval-exp (add (int 2) (munit))))
 ;              "add bad argument")
