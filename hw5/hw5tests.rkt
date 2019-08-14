@@ -26,12 +26,12 @@
               (lambda () (eval-exp (add (int 2) (munit))))
               "add bad argument")
 ;
-;   (check-equal? (mupllist->racketlist
-;                  (eval-exp (call (call mupl-all-gt (int 9))
-;                                  (racketlist->mupllist 
-;                                   (list (int 10) (int 9) (int 15))))))
-;                 (list (int 10) (int 15))
-;                 "provided combined test using problems 1, 2, and 4")
+   (check-equal? (mupllist->racketlist
+                  (eval-exp (call (call mupl-all-gt (int 9))
+                                  (racketlist->mupllist 
+                                   (list (int 10) (int 9) (int 15))))))
+                 (list (int 10) (int 15))
+                 "provided combined test using problems 1, 2, and 4")
    ))
 
 (require rackunit/text-ui)
