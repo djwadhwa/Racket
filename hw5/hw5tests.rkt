@@ -20,11 +20,12 @@
    (check-equal? (mupllist->racketlist mlist) rlist)
    (check-equal? (eval-exp (add (int 2) (int 2))) (int 4) "add simple test")
    (check-equal? (eval-exp (call (fun "bar" "p" (isgreater (first (var "p")) (second (var "p")))) (apair (int 7) (int 5)))) (int 1))
-
+   (check-equal? (eval-exp (call (call mupl-filter (fun null "arg" (isgreater (var "arg") (int 0)))) (apair (int 1) (apair (int -1) (apair (int 3) (munit))))))
+                 (apair (int 1) (apair (int 3) (munit))))
    (check-exn (lambda (x) (string=? (exn-message x) "MUPL addition applied to non-number"))
               (lambda () (eval-exp (add (int 2) (munit))))
               "add bad argument")
-
+;
 ;   (check-equal? (mupllist->racketlist
 ;                  (eval-exp (call (call mupl-all-gt (int 9))
 ;                                  (racketlist->mupllist 
