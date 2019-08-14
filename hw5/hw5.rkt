@@ -78,7 +78,7 @@
                (error "first expression is not a MUPL integer")))]
         [(fun? e) (closure env e)]
         [(mlet? e) (let* ([v (eval-under-env (mlet-e e) env)]
-                         [new-env (cons (cons (mlet-var e) v) env)])
+                          [new-env (cons (cons (mlet-var e) v) env)])
                      (eval-under-env (mlet-body e) new-env))]
         [(call? e) (let ([v1 (eval-under-env (call-funexp e) env)]
                          [v2 (eval-under-env (call-actual e) env)])
@@ -88,16 +88,16 @@
                            (if (null? (fun-nameopt function))
                                (eval-under-env (fun-body function) (cons (cons (fun-formal function) v2) environment))
                                (eval-under-env (fun-body function) (cons (cons (fun-nameopt function) v1) (cons (cons (fun-formal function) v2) environment)))))
-                           (error "first expression not a MUPL closure")))]
+                         (error "first expression not a MUPL closure")))]
         [(apair? e) (apair (eval-under-env (apair-e1 e) env) (eval-under-env (apair-e2 e) env))]
         [(first? e) (let ([v (eval-under-env (first-e e) env)])
                       (if (apair? v)
-                      (apair-e1 v)
-                      (error "expression is not a MUPL pair")))]
+                          (apair-e1 v)
+                          (error "expression is not a MUPL pair")))]
         [(second? e) (let ([v (eval-under-env (second-e e) env)])
-                      (if (apair? v)
-                      (apair-e2 v)
-                      (error "expression is not a MUPL pair")))]
+                       (if (apair? v)
+                           (apair-e2 v)
+                           (error "expression is not a MUPL pair")))]
         [(ismunit? e) (if (munit? (eval-under-env (ismunit-e e) env))
                           (int 1)
                           (int 0))]
@@ -108,7 +108,6 @@
   (eval-under-env e null))
 
 ;; Problem 3
-
 (define (ifmunit e1 e2 e3)
   (ifnz (ismunit e1) e2 e3))
 
@@ -125,22 +124,19 @@
                      e4
                      e3))))
           
-
 ;; Problem 4
 ;fix mupl-filter
 (define mupl-filter
- (fun null "func"
-      (fun "recursive" "ls"
-           (ifnz (ismunit (var "ls" ))
-                 (munit)
-                 (ifnz (call (var "func") (first (var "ls")))
-                       (apair (first (var "ls")) (call (var "recursive") (second (var "ls"))))
-                       (call (var "recursive") (second (var "ls"))))))))
+  (fun null "func"
+       (fun "recursive" "ls"
+            (ifnz (ismunit (var "ls" ))
+                  (munit)
+                  (ifnz (call (var "func") (first (var "ls")))
+                        (apair (first (var "ls")) (call (var "recursive") (second (var "ls"))))
+                        (call (var "recursive") (second (var "ls"))))))))
 
 (define mupl-all-gt
   (mlet "filter" mupl-filter (fun null "num" (call (var "filter") (fun null "val" (isgreater (var "val") (var "num")))))))
-
-;(eval-exp (call (call mupl-filter (fun null "arg" (isgreater (var "arg") (int 0)))) (apair (int 1) (apair (int -1) (apair (int 3) (munit))))))
 
 ;; Challenge Problem
 
