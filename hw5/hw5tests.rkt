@@ -19,20 +19,27 @@
    (check-equal? (racketlist->mupllist rlist) mlist)
    (check-equal? (mupllist->racketlist mlist) rlist)
    (check-equal? (eval-exp (add (int 2) (int 2))) (int 4) "add simple test")
+   
+   (check-equal? (eval-exp (isgreater (add (int 1) (int 1)) (int 1))) (int 1))
+   (check-equal? (eval-exp (ifnz (isgreater (add (int 1) (int -1)) (int 1)) (int 10) (int 9))) (int 9))
+   (check-equal? (eval-exp (fun null "p" (int 1))) (closure null (fun null "p" (int 1))))
+   (check-equal? (eval-exp (mlet "test" (int 1) (add (var "test") (var "test")))) (int 2))
    (check-equal? (eval-exp (call (fun "bar" "p" (isgreater (first (var "p")) (second (var "p")))) (apair (int 7) (int 5)))) (int 1))
-   (check-equal? (eval-exp (call (call mupl-filter (fun null "arg" (isgreater (var "arg") (int 0)))) (apair (int 1) (apair (int -1) (apair (int 3) (munit))))))
-                 (apair (int 1) (apair (int 3) (munit))))
+   (check-equal? (eval-exp (apair (add (int 10) (int 9)) (isgreater (int 10) (int 9)))) (apair (int 19) (int 1)))
+   (check-equal? (eval-exp (ismunit (munit))) (int 1))
+   
    (check-exn (lambda (x) (string=? (exn-message x) "MUPL addition applied to non-number"))
               (lambda () (eval-exp (add (int 2) (munit))))
               "add bad argument")
-;
+
+   (check-equal? (eval-exp (call (call mupl-filter (fun null "arg" (isgreater (var "arg") (int 0)))) (apair (int 1) (apair (int -1) (apair (int 3) (munit))))))
+                 (apair (int 1) (apair (int 3) (munit))))
    (check-equal? (mupllist->racketlist
                   (eval-exp (call (call mupl-all-gt (int 9))
                                   (racketlist->mupllist 
                                    (list (int 10) (int 9) (int 15))))))
                  (list (int 10) (int 15))
-                 "provided combined test using problems 1, 2, and 4")
-   ))
+                 "provided combined test using problems 1, 2, and 4")))
 
 (require rackunit/text-ui)
 ;; runs the test
