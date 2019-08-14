@@ -112,7 +112,6 @@
 (define (ifmunit e1 e2 e3)
   (ifnz (ismunit e1) e2 e3))
 
-;(struct mlet (var e body) #:transparent) ;; a local binding (let var = e in body)
 (define (mlet* bs e2)
   (if (null? bs)
       e2
@@ -128,17 +127,20 @@
           
 
 ;; Problem 4
-
-(define (mupl-filter func)
-  (fun "recursive" "ls" (ifnz (ismunit (var "ls" ))
-                              (munit)
-                              (ifnz (call func (first (var "ls")))
-                                    (apair (first (var "ls")) (call (var "recursive") (second (var "ls"))))
-                                    (call (var "recursive") (second (var "ls")))))))
+;fix mupl-filter
+(define mupl-filter
+ (fun null "func"
+      (fun "recursive" "ls"
+           (ifnz (ismunit (var "ls" ))
+                 (munit)
+                 (ifnz (call (var "func") (first (var "ls")))
+                       (apair (first (var "ls")) (call (var "recursive") (second (var "ls"))))
+                       (call (var "recursive") (second (var "ls"))))))))
 
 (define mupl-all-gt
-  (mlet "filter" mupl-filter
-        "CHANGE (notice filter is now in MUPL scope)"))
+  (mlet "filter" mupl-filter (var "filter" )))
+
+;(eval-exp (call (call mupl-filter (fun null "arg" (isgreater (var "arg") (int 0)))) (apair (int 1) (apair (int -1) (apair (int 3) (munit))))))
 
 ;; Challenge Problem
 
