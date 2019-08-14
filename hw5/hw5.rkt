@@ -138,7 +138,7 @@
                        (call (var "recursive") (second (var "ls"))))))))
 
 (define mupl-all-gt
-  (mlet "filter" mupl-filter (var "filter" )))
+  (mlet "filter" mupl-filter (fun null "num" (call (var "filter") (fun null "val" (isgreater (var "val") (var "num")))))))
 
 ;(eval-exp (call (call mupl-filter (fun null "arg" (isgreater (var "arg") (int 0)))) (apair (int 1) (apair (int -1) (apair (int 3) (munit))))))
 
